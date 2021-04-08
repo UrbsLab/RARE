@@ -1,5 +1,5 @@
 #Code for running Experiment 3
-#Must be run after running the code "RARE Functions Definition"
+#Must be run after running the code in "RARE_Methods"
 
 #Experiment 3: 1 Bin, 0.1 Noise, No Expert Knowlege
 for replicate in range (0,1):
