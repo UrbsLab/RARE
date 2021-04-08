@@ -1,5 +1,5 @@
 #Code for running Experiment 9
-#Must be run after running the code "RARE Functions Definition"
+#Must be run after running the code in "RARE_Methods"
 
 # In[ ]:
 
