@@ -1,3 +1,5 @@
+#This file contains the code for the two Rare Variant Data Simulators (RVDSs)
+
 
 #Defining a function to create an artificial dataset with parameters, there will be one ideal/strong bin
 #Note: MAF (minor allele frequency) cutoff refers to the threshold separating rare variant features from common features
