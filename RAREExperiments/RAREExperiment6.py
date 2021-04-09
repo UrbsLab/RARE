@@ -1,11 +1,11 @@
-#Code for running Experiment 7
+#Code for running Experiment 6
 #Must be run after running the code in "RARE Constant Bin Size Functions Definition"
 
 
 
-#Experiment 7: 1 Bin, 0 Noise, No Expert Knowlege, Relief Scoring, Constant Bin Size
+#Experiment 6: 1 Bin, 0 Noise, No Expert Knowlege, Relief Scoring, Constant Bin Size
 for replicate in range (0,1):
-    print('Experiment 7')
+    print('Experiment 6')
         
     #Creating the simulated dataset
     sim_data, cutoff = RVDS_One_Bin(1000, 50, 10, 0.05, 'mean', 0)
