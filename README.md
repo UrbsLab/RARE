@@ -55,6 +55,8 @@ Parameters for RVDS for Epistatic Interaction Bin
 6) genotype_cutoff_metric: "mean" or "median" (recommended "mean")
 7) endpoint_variation_probability: how much noise is desired in the dataset (0 produces a bin that interacts with a common feature to be fully penetrant, 0.5 can be used as a negative control where class value is randomly assigned)
 8) list of MLGs_predicting_disease: which of the nine MLGs (AABB, AaBB, aaBB, AABb, AaBb, aaBb, AAbb, Aabb, aabb) correspond to a value of 1 in the class column. [AABB, aaBB, AaBb, AAbb, aabb] should be paired with [0.25, 0.5, 0.25] for the common feature genotype frequencies list to create a dataset with pure, strict epistasis
-9) 
+9) print_summary: whether or not a summary of the simulated datasets with penetrance and frequency values for each of the bin genotypes, common feature genotypes, and MLGs should be printed (True or False)
+                                
+                                
                                 
 We evaluate RARE with 9 Experiments contained in the RAREExperiments file. Each file contains an example of using an RVDS to create a simulated dataset and also shows how to apply the RARE algorithm on a dataset. 
