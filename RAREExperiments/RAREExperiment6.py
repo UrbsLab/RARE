@@ -1,12 +1,12 @@
-#Code for running Experiment 7
+#Code for running Experiment 6
 #Must be run after running the code in "RARE_Methods"
 
 # In[ ]:
 
 
-#Experiment 7: 1 Bin, 0 Noise, All bins contain "expert knowledge" as in correct associations between many but not all features that belong in the bin
+#Experiment 6: 1 Bin, 0 Noise, All bins contain "expert knowledge" as in correct associations between many but not all features that belong in the bin
 for replicate in range (0, 1):
-    print('Experiment 7')
+    print('Experiment 6')
     
     #Inputting the "partial answers" to see if RARE can preserve/further these
     partial_answers = {}
