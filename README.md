@@ -37,7 +37,7 @@ Please see the RARE_Methods.py file for code definition the RARE function and it
 
 Please see the RARE_Variant_Data_Simulator_Methods.py file for the code of the two RVDSs.
 
-<ins>Parameters for RVDS for Univariate Association Bin<\ins>
+<ins>Parameters for RVDS for Univariate Association Bin:
 1) number_of_instances: number of instances (i.e., rows) desired in the simulated dataset
 2) number_of_features: the total number of rare variant features that should be in the simulated dataset
 3) number_of_features_in_bin: of the number_of_features, how many rare variant features should be binned additively for univariate association to class
@@ -45,7 +45,7 @@ Please see the RARE_Variant_Data_Simulator_Methods.py file for the code of the t
 5) endpoint_cutoff_parameter: "mean" or "median" (recommended "mean")
 6) endpoint_variation_probability: how much noise is desired in the dataset (0 produces a bin with a 100% clear signal, 0.5 can be used as a negative control where class value is randomly assigned)
 
-<ins>Parameters for RVDS for Epistatic Interaction Bin<\ins>
+<ins>Parameters for RVDS for Epistatic Interaction Bin:
 1) number_of_instances: number of instances (i.e., rows) desired in the simulated dataset
 2) number_of_rare_features: the total number of rare variant features that should be in the simulated dataset
 3) number_of_features_in_bin: of the number_of_features, how many rare variant features should be binned additively for univariate association to class
