@@ -11,9 +11,7 @@ through the following steps:
   b) Genetic operations (parent selection, crossover, and mutation) to generate the next generation of candidate bins
 3) Final bin evaluation and summary of top bins
 
-Please see the RARE_Methods.py file for code definition the RARE function and its subfunctions.
-The RAREConstantBinSizeFunctionsDefinition.py file contains code for a modified version of RARE that preserves a constant bin size through initilaization and evolutionary cycles.
-(these files also contain code defining the RVDS functions for the data simulators used to test RARE)
+Please see the RARE_Methods.py file for code definition the RARE function and its subfunctions. The RAREConstantBinSizeFunctionsDefinition.py file contains code for a modified version of RARE that preserves a constant bin size through initilaization and evolutionary cycles (these files also contain code defining the RVDS functions for the data simulators used to test RARE)
 
 Parameters for RARE:
 1) given_starting_point: whether or not expert knowledge is being inputted (True or False)
