@@ -244,205 +244,21 @@ def Rare_and_Common_Variable_Separation (original_feature_matrix, label_name, ra
 # In[ ]:
 
 
-#Defining a function to calculate the feature importance of each bin using MultiSURF
-def MultiSURF_Feature_Importance(bin_feature_matrix, label_name):
-    
-    #Converting to float to prevent any errors with the MultiSURF algorithm
-    float_feature_matrix = bin_feature_matrix.astype(float)
-    
-    #Using MultiSURF and storing the feature importances in a dictionary
-    features, labels = float_feature_matrix.drop(label_name, axis=1).values, float_feature_matrix[label_name].values
-    fs = MultiSURF()
-    fs.fit(features, labels)
-    feature_scores = {}
-    for feature_name, feature_score in zip(float_feature_matrix.drop(label_name, axis=1).columns,
-                                       fs.feature_importances_):
-        feature_scores[feature_name] = feature_score
-        
-    return feature_scores
+
 
 
 # In[ ]:
 
 
-#Defining a function to calculate MultiSURF feature importance based on a sample of instances
-def MultiSURF_Feature_Importance_Instance_Sample(bin_feature_matrix, label_name, sample_size):
-    
-    #Taking a random sample of the instances based on the sample size paramter to calculate MultiSURF 
-    bin_feature_matrix_sample = bin_feature_matrix.sample(sample_size)
-    
-    #Converting to float to prevent any errors with the MultiSURF algorithm
-    float_feature_matrix = bin_feature_matrix_sample.astype(float)
-    
-    #Using MultiSURF and storing the feature importances in a dictionary
-    features, labels = float_feature_matrix.drop(label_name, axis=1).values, float_feature_matrix[label_name].values
-    fs = MultiSURF()
-    fs.fit(features, labels)
-    feature_scores = {}
-    for feature_name, feature_score in zip(float_feature_matrix.drop(label_name, axis=1).columns,
-                                       fs.feature_importances_):
-        feature_scores[feature_name] = feature_score
-        
-    return feature_scores
 
 
 # In[ ]:
 
 
-#Defining a function to calculate the feature importance of each bin using MultiSURF for rare variants in context with common variables
-def MultiSURF_Feature_Importance_Rare_Variants(bin_feature_matrix, common_feature_list, common_feature_matrix, label_name):
-    
-    #Creating a feature matrix with both binned rare variants and common features when calculating feature importance
-    common_features_and_bins_matrix = bin_feature_matrix.copy()
-    
-    for i in range (0, len(common_feature_list)):
-        common_features_and_bins_matrix[common_feature_list[i]] = common_feature_matrix[common_feature_list[i]]
-
-    #Converting to float to prevent any errors with the MultiSURF algorithm
-    float_feature_matrix = common_features_and_bins_matrix.astype(float)
-    
-    #Using MultiSURF and storing the feature importances in a dictionary
-    features, labels = float_feature_matrix.drop(label_name, axis=1).values, float_feature_matrix[label_name].values
-    fs = MultiSURF()
-    fs.fit(features, labels)
-    feature_scores = {}
-    for feature_name, feature_score in zip(float_feature_matrix.drop(label_name, axis=1).columns,
-                                       fs.feature_importances_):
-        feature_scores[feature_name] = feature_score
-        
-    for i in range (0, len(common_feature_list)):
-        del feature_scores[common_feature_list[i]]
-        
-    return feature_scores
 
 
-# In[ ]:
 
 
-#Defining a function to calculate MultiSURF feature importance for rare variants in context with common variables based on a sample of instances
-def MultiSURF_Feature_Importance_Rare_Variants_Instance_Sample(bin_feature_matrix, common_feature_list, common_feature_matrix,
-                                                               label_name, sample_size):
-    
-    #Creating a feature matrix with both binned rare variants and common features when calculating feature importance
-    common_features_and_bins_matrix = bin_feature_matrix.copy()
-    
-    for i in range (0, len(common_feature_list)):
-        common_features_and_bins_matrix[common_feature_list[i]] = common_feature_matrix[common_feature_list[i]]
-    
-    #Taking a random sample of the instances based on the sample size paramter to calculate MultiSURF 
-    common_features_and_bins_matrix_sample = common_features_and_bins_matrix.sample(sample_size)
-    
-    #Converting to float to prevent any errors with the MultiSURF algorithm
-    float_feature_matrix = common_features_and_bins_matrix_sample.astype(float)
-    
-    #Using MultiSURF and storing the feature importances in a dictionary
-    features, labels = float_feature_matrix.drop(label_name, axis=1).values, float_feature_matrix[label_name].values
-    fs = MultiSURF()
-    fs.fit(features, labels)
-    feature_scores = {}
-    for feature_name, feature_score in zip(float_feature_matrix.drop(label_name, axis=1).columns,
-                                       fs.feature_importances_):
-        feature_scores[feature_name] = feature_score
-    
-    for i in range (0, len(common_feature_list)):
-        del feature_scores[common_feature_list[i]]
-        
-    return feature_scores
-
-
-# In[ ]:
-
-
-#Defining a function to calculate MultiSURF feature importance only considering the bin and common feature(s)
-def MultiSURF_Feature_Importance_Bin_and_Common_Features(bin_feature_matrix, amino_acid_bins, common_feature_list, common_feature_matrix, label_name):
-    #Creating a feature matrix with both binned rare variants and common features when calculating feature importance
-    common_features_and_bins_matrix = bin_feature_matrix.copy()
-    
-    for i in range (0, len(common_feature_list)):
-        common_features_and_bins_matrix[common_feature_list[i]] = common_feature_matrix[common_feature_list[i]]
-    
-    bin_scores = {}
-    for i in amino_acid_bins.keys():
-        #Only taking the bin and the common features for the feature importance calculation
-        bin_and_common_features = []
-        bin_and_common_features.append(i)
-        bin_and_common_features.extend(common_feature_list)
-        bin_and_common_features.append(label_name)
-        bin_and_cf_df = common_features_and_bins_matrix[bin_and_common_features]
-        float_feature_matrix = bin_and_cf_df.astype(float)
-        features, labels = float_feature_matrix.drop(label_name, axis=1).values, float_feature_matrix[label_name].values
-        fs = MultiSURF()
-        fs.fit(features, labels)
-        feature_scores = {}
-        for feature_name, feature_score in zip(float_feature_matrix.drop(label_name, axis=1).columns,
-                                       fs.feature_importances_):
-            feature_scores[feature_name] = feature_score
-        bin_scores[i] = feature_scores[i]
-    
-    return bin_scores
-
-
-# In[ ]:
-
-
-#Defining a function to calculate MultiSURF feature importance only considering the bin and common feature(s)
-def MultiSURF_Feature_Importance_Bin_and_Common_Features_Instance_Sample(bin_feature_matrix, amino_acid_bins, common_feature_list, common_feature_matrix, label_name, sample_size):
-    #Creating a feature matrix with both binned rare variants and common features when calculating feature importance
-    common_features_and_bins_matrix = bin_feature_matrix.copy()
-    
-    for i in range (0, len(common_feature_list)):
-        common_features_and_bins_matrix[common_feature_list[i]] = common_feature_matrix[common_feature_list[i]]
-    
-    bin_scores = {}
-    for i in amino_acid_bins.keys():
-        #Only taking the bin and the common features for the feature importance calculation
-        bin_and_common_features = []
-        bin_and_common_features.append(i)
-        bin_and_common_features.extend(common_feature_list)
-        bin_and_common_features.append(label_name)
-        bin_and_cf_df = common_features_and_bins_matrix[bin_and_common_features]
-        
-        #Taking a sample to run MultiSURF on
-        bin_and_cf_df_sample = bin_and_cf_df.sample(sample_size)
-        float_feature_matrix = bin_and_cf_df_sample.astype(float)
-        features, labels = float_feature_matrix.drop(label_name, axis=1).values, float_feature_matrix[label_name].values
-        fs = MultiSURF()
-        fs.fit(features, labels)
-        feature_scores = {}
-        for feature_name, feature_score in zip(float_feature_matrix.drop(label_name, axis=1).columns,
-                                       fs.feature_importances_):
-            feature_scores[feature_name] = feature_score
-        bin_scores[i] = feature_scores[i]
-    
-    return bin_scores
-
-
-# In[ ]:
-
-
-#Defining a function to score bins based on chi squared value
-def Chi_Square_Feature_Importance(bin_feature_matrix, label_name, amino_acid_bins):
-    
-   #Calculating the chisquare and p values of each of the bin features in the bin feature matrix
-    feature_matrix = bin_feature_matrix.copy()
-    X = bin_feature_matrix.drop(label_name,axis=1)
-    y = bin_feature_matrix[label_name]
-    chi_scores, p_values = chi2(X,y)
-
-    #Creating a dictionary with each bin and the chi-square value and p-value
-    bin_scores = {}
-    bin_names_list = list(amino_acid_bins.keys())
-    for i in range (0, len(bin_names_list)):
-        bin_scores[bin_names_list[i]] = chi_scores[i]
-        
-    for i in bin_scores.keys():
-        if np.isnan(bin_scores[i]) == True:
-            bin_scores[i] = 0
-    
-    return bin_scores
-
-
-# In[ ]:
 
 
 #Step 2b: Genetic Algorithm 
@@ -762,149 +578,7 @@ def Regroup_Feature_Matrix(feature_list, feature_matrix, label_name, feature_bin
     return bins_df, binned_feature_groups
 
 
-# In[ ]:
 
-
-
-#ADDING FUNCTIONS TO TEST RARE 
-
-
-# In[ ]:
-
-
-#Defining a function to create an artificial dataset with parameters, there will be one ideal/strong bin
-#Note: MAF (minor allele frequency) cutoff refers to the threshold separating rare variant features from common features
-def RVDS_One_Bin(number_of_instances, number_of_features, number_of_features_in_bin, 
-                 rare_variant_MAF_cutoff, endpoint_cutoff_parameter, endpoint_variation_probability):
-    
-    #Creating an empty dataframe to use as a starting point for the eventual feature matrix
-    #Adding one to number of features to give space for the class column
-    df = pd.DataFrame(np.zeros((number_of_instances, number_of_features+1)))
-    
-    #Creating a list of features
-    feature_list = []
-    
-    #Creating a list of predictive features in the strong bin
-    predictive_features = []
-    for a in range (0, number_of_features_in_bin):
-        predictive_features.append("P_" + str(a+1))
-    
-    for b in range (0, len(predictive_features)):
-        feature_list.append(predictive_features[b])
-            
-    #Creating a list of randomly created features
-    random_features = []
-    for c in range (0, number_of_features - number_of_features_in_bin):
-        random_features.append("R_" + str(c+1))
-    
-    for d in range (0, len(random_features)):
-        feature_list.append(random_features[d])
-    
-    #Adding the features and the class/endpoint 
-    features_and_class = feature_list.copy()
-    features_and_class.append('Class')
-    df.columns = features_and_class
-    
-    #Creating a list of numbers with the amount of numbers equal to the number of instances
-    #This will be used when assigning values to the values of features that are in the bin
-    instance_list = []
-    for number in range (0, number_of_instances):
-        instance_list.append(number)
-    
-    #ASSIGNING VALUES TO PREDICTIVE FEATURES
-    #Randomly assigning instances in each of the predictive features the value of 1 or 2
-    #Ensuring that the MAF (minor allele frequency) of each feature is a random value between 0 and the cutoff
-    #Multiplying by 2 because there are two alleles for each instance
-    for e in range (0, number_of_features_in_bin):
-        #Calculating the sum of instances with minor alleles
-        MA_sum = round((random.uniform(0, 2*rare_variant_MAF_cutoff))*number_of_instances)
-        #Between 0 and 50% of the minor allele sum will be from instances with value 2
-        number_of_MA2_instances = round(0.5*(random.uniform(0, MA_sum*0.5)))
-        #The remaining MA instances will have a value of 1
-        number_of_MA1_instances = MA_sum - 2*number_of_MA2_instances
-        MA1_instances = random.sample(instance_list, number_of_MA1_instances)
-        for f in MA1_instances:
-            df.at[f, predictive_features[e]] = 1
-        instances_wo_MA1 = list(set(instance_list) - set(MA1_instances))
-        MA2_instances = random.sample(instances_wo_MA1, number_of_MA2_instances)
-        for f in MA2_instances:
-            df.at[f, predictive_features[e]] = 2
-    
-    #ASSIGNING ENDPOINT (CLASS) VALUES 
-    #Creating a list of bin values for the sum of values across predictive features in the bin
-    bin_values = []
-    for g in range (0, number_of_instances):
-        sum_of_values = 0
-        for h in predictive_features:
-            sum_of_values += df.iloc[g][h]
-        bin_values.append(sum_of_values)
-    
-    #User input for the cutoff between 0s and 1s is either mean or median. 
-    if endpoint_cutoff_parameter == 'mean':
-        #Finding the mean to make a cutoff for 0s and 1s in the class colum
-        endpoint_cutoff = statistics.mean(bin_values)
-    
-        #If the sum of feature values in an instance is greater than or equal to the mean, then the endpoint will be 1
-        for i in range (0, number_of_instances):
-            if bin_values[i] > endpoint_cutoff:
-                df.at[i, 'Class'] = 1
-        
-            elif bin_values[i] == endpoint_cutoff:
-                df.at[i, 'Class'] = 1
-            
-            elif bin_values[1] < endpoint_cutoff:
-                df.at[i, 'Class'] = 0
-    
-    elif endpoint_cutoff_parameter == 'median':
-        #Finding the median to make a cutoff for 0s and 1s in the class colum
-        endpoint_cutoff = statistics.median(bin_values)
-    
-        #If the sum of feature values in an instance is greater than or equal to the mean, then the endpoint will be 1
-        for i in range (0, number_of_instances):
-            if bin_values[i] > endpoint_cutoff:
-                df.at[i, 'Class'] = 1
-        
-            elif bin_values[i] == endpoint_cutoff:
-                df.at[i, 'Class'] = 1
-            
-            elif bin_values[1] < endpoint_cutoff:
-                df.at[i, 'Class'] = 0
-        
-    #Applying the "noise" parameter to introduce endpoint variability
-    for instance in range (0, number_of_instances):
-        if endpoint_variation_probability > random.uniform(0,1):
-            if df.loc[instance]['Class'] == 0:
-                df.at[instance, 'Class'] = 1
-            
-            elif df.loc[instance]['Class'] == 1:
-                df.at[instance,'Class'] = 0
-    
-    #ASSIGNING VALUES TO RANDOM FEATURES
-    #Randomly assigning instances in each of the random features the value of 1
-    #Ensuring that the MAF of each feature is a random value between 0 and the cutoff (probably 0.05)
-    #Multiplying by 2 because there are two alleles for each instance
-    for e in range (0, len(random_features)):
-        #Calculating the sum of instances with minor alleles
-        MA_sum = round((random.uniform(0, 2*rare_variant_MAF_cutoff))*number_of_instances)
-        #Between 0 and 50% of the minor allele sum will be from instances with value 2
-        number_of_MA2_instances = round(0.5*(random.uniform(0, MA_sum*0.5)))
-        #The remaining MA instances will have a value of 1
-        number_of_MA1_instances = MA_sum - 2*number_of_MA2_instances
-        MA1_instances = random.sample(instance_list, number_of_MA1_instances)
-        for f in MA1_instances:
-            df.at[f, random_features[e]] = 1
-        instances_wo_MA1 = list(set(instance_list) - set(MA1_instances))
-        MA2_instances = random.sample(instances_wo_MA1, number_of_MA2_instances)
-        for f in MA2_instances:
-            df.at[f, random_features[e]] = 2
-    
-    return df, endpoint_cutoff
-
-
-# In[ ]:
-
-
-# In[10]:
 
 
 #Defining a function to score bins based on predictive metrics (accuracy, precision, recall/sensitivity, f1, or specificity)
@@ -1455,7 +1129,7 @@ def predictRAFE (given_starting_point, amino_acid_start_point, amino_acid_bins_s
 
 
 #Defining a function to present the top bins 
-def Top_Bins_Summary(original_feature_matrix, label_name, bin_feature_matrix, bins, bin_scores, bin_optimal_cutoffs, bin_proportions, number_of_top_bins, scoring_method):
+def prTop_Bins_Summary(original_feature_matrix, label_name, bin_feature_matrix, bins, bin_scores, bin_optimal_cutoffs, bin_proportions, number_of_top_bins, scoring_method):
     
     #Ordering the bin scores from best to worst
     sorted_bin_scores = dict(sorted(bin_scores.items(), key=lambda item: item[1], reverse=True))
@@ -1584,10 +1258,10 @@ def riskRAFE (given_starting_point, amino_acid_start_point, amino_acid_bins_star
 
 # In[13]:
 
-
-df = pd.read_csv('/home/satvikd/Datasets/srtrdata.csv')
-bin_feature_matrix, amino_acid_bins, amino_acid_bin_scores, bin_optimal_cutoffs, bin_proportions, MAF_0_features = predictRAFE(False, None, None, 1000, df, 'Class', 100, 5, 10, 'accuracy', True, 0.1, 0.8, 0.1, 0.3)
-Top_Bins_Summary(df, 'Class', bin_feature_matrix, amino_acid_bins, amino_acid_bin_scores, bin_optimal_cutoffs, bin_proportions, 10, 'accuracy')
+#Code running example
+#df = pd.read_csv('/home/satvikd/Datasets/srtrdata.csv')
+#bin_feature_matrix, amino_acid_bins, amino_acid_bin_scores, bin_optimal_cutoffs, bin_proportions, MAF_0_features = predictRAFE(False, None, None, 1000, df, 'Class', 100, 5, 10, 'accuracy', True, 0.1, 0.8, 0.1, 0.3)
+#prTop_Bins_Summary(df, 'Class', bin_feature_matrix, amino_acid_bins, amino_acid_bin_scores, bin_optimal_cutoffs, bin_proportions, 10, 'accuracy')
 
 
 # In[14]:
