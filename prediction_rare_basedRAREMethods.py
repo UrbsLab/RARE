@@ -4,7 +4,7 @@
 # In[1]:
 
 
-#This file contains all the code defining the functions for RARE with prediction based scoring
+#This file contains all the code defining the functions for RARE with prediction metric or risk metric based scoring
 #No function is ever called in this file, please see the "RARE Experiment 1" file for an example of how to run RARE on the Rare Variant Data Simulators
 #Readers please note: amino acid refers to a rare variant feature, while amino acid bin is the equivalent of a bin of rare variant features
 
