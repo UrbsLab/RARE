@@ -6,11 +6,11 @@ through the following steps:
 
 1) Random bin initializaiton or expert knowledge input
 2) Repeated evolutionary cycles consisting of:
-  a) Candidate bin evaluation with univariate scoring (chi-square test) or Relief-based scoring (MultiSURF algorithm)
+  a) Candidate bin evaluation with univariate scoring (chi-square test) or Relief-based scoring (MultiSURF algorithm); Note: new scoring options currently under testing
   b) Genetic operations (parent selection, crossover, and mutation) to generate the next generation of candidate bins
 3) Final bin evaluation and summary of top bins
 
-Please see the RARE_Methods.py file for code definition the RARE function and its subfunctions. The RAREConstantBinSizeFunctionsDefinition.py file contains code for a modified version of RARE that preserves a constant bin size through initilaization and evolutionary cycles (these files also contain code defining the RVDS functions for the data simulators used to test RARE)
+In the GECCO '21 folder, please see the RARE_Methods.py file for code definition the RARE function and its subfunctions. The RAREConstantBinSizeFunctionsDefinition.py file contains code for a modified version of RARE that preserves a constant bin size through initilaization and evolutionary cycles (these files also contain code defining the RVDS functions for the data simulators used to test RARE)
 
 <ins>Parameters for RARE:</ins>
 1) given_starting_point: whether or not expert knowledge is being inputted (True or False)
@@ -35,7 +35,7 @@ Please see the RARE_Methods.py file for code definition the RARE function and it
 1) The RVDS for Univariate Association Bin (called RVDS_One_Bin) creates a dataset such that no rare variant feature is 100% predictive of class, but an additive bin of features is fully penetrant to class.
 2) The RVDS for Epistatic Interaction Bin creates a dataset such that no rare variant feature or bin of rare variant features is predictive of class, but an epistatic interaction between a common feature and an additive bin of rare variant features is 100% predictive of class.
 
-Please see the RARE_Variant_Data_Simulator_Methods.py file for the code of the two RVDSs.
+In the GECCO '21 folder, please see the RARE_Variant_Data_Simulator_Methods.py file for the code of the two RVDSs.
 
 <ins>Parameters for RVDS for Univariate Association Bin:
 1) number_of_instances: number of instances (i.e., rows) desired in the simulated dataset
@@ -55,8 +55,6 @@ Please see the RARE_Variant_Data_Simulator_Methods.py file for the code of the t
 7) endpoint_variation_probability: how much noise is desired in the dataset (0 produces a bin that interacts with a common feature to be fully penetrant, 0.5 can be used as a negative control where class value is randomly assigned)
 8) list of MLGs_predicting_disease: which of the nine MLGs (AABB, AaBB, aaBB, AABb, AaBb, aaBb, AAbb, Aabb, aabb) correspond to a value of 1 in the class column. [AABB, aaBB, AaBb, AAbb, aabb] should be paired with [0.25, 0.5, 0.25] for the common feature genotype frequencies list to create a dataset with pure, strict epistasis
 9) print_summary: whether or not a summary of the simulated datasets with penetrance and frequency values for each of the bin genotypes, common feature genotypes, and MLGs should be printed (True or False)
+                                                                                               
                                 
-                                
-                                
-                                
-We evaluate RARE with 9 Experiments contained in the RAREExperiments file. Each file contains an example of using an RVDS to create a simulated dataset and also shows how to apply the RARE algorithm on a dataset. 
+We evaluate RARE with 9 Experiments contained in the RAREExperiments file, located in the GECCO '21 Folder. Each file contains an example of using an RVDS to create a simulated dataset and also shows how to apply the RARE algorithm on a dataset. 
