@@ -1,5 +1,7 @@
 # RARE
-**RARE: Relevant Association Rare-variant-bin Evolver** (under development) is an evolutionary algorithm approach to binning rare variants as a rare variant association analysis tool. Please email satvik.dasariraju@pennmedicine.upenn.edu and ryanurb@pennmedicine.upenn.edu for any inquiries related to RARE. 
+Citation: Dasariraju, S., & Urbanowicz, R. J. (2021). RARE: Evolutionary feature engineering for rare-variant bin discovery. Proceedings of the Genetic and Evolutionary Computation Conference Companion, 1335–1343. https://doi.org/10.1145/3449726.3463174
+
+**RARE: Relevant Association Rare-variant-bin Evolver** (under development) is an evolutionary algorithm approach to binning rare variants as a rare variant association analysis tool. Please email sdasariraju23@lawrenceville.org and Ryan.Urbanowicz@cshs.org for any inquiries related to RARE. 
 
 RARE is an evolutionary algorithm that constructs bins of rare variant features with relevant association to class (univariate and/or multivariate interactions)
 through the following steps:
