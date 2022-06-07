@@ -6,11 +6,11 @@ Citation: Dasariraju, S., & Urbanowicz, R. J. (2021). RARE: Evolutionary feature
 RARE is an evolutionary algorithm that constructs bins of rare variant features with relevant association to class (univariate and/or multivariate interactions)
 through the following steps:
 
-1) Random bin initializaiton or expert knowledge input
-2) Repeated evolutionary cycles consisting of:
-  a) Candidate bin evaluation with univariate scoring (chi-square test) or Relief-based scoring (MultiSURF algorithm); Note: new scoring options currently under testing
-  b) Genetic operations (parent selection, crossover, and mutation) to generate the next generation of candidate bins
-3) Final bin evaluation and summary of top bins
+1. Random bin initializaiton or expert knowledge input
+2. Repeated evolutionary cycles consisting of:
+   - Candidate bin evaluation with univariate scoring (chi-square test) or Relief-based scoring (MultiSURF algorithm); Note: new scoring options currently under testing
+   - Genetic operations (parent selection, crossover, and mutation) to generate the next generation of candidate bins
+3. Final bin evaluation and summary of top bins
 
 In the GECCO '21 folder, please see the RARE_Methods.py file for code definition of the RARE function and its subfunctions. The RAREConstantBinSizeFunctionsDefinition.py file contains code for a modified version of RARE that preserves a constant bin size through initilaization and evolutionary cycles (these files also contain code defining the RVDS functions for the data simulators used to test RARE)
 
