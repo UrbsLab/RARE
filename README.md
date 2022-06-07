@@ -12,7 +12,7 @@ through the following steps:
   b) Genetic operations (parent selection, crossover, and mutation) to generate the next generation of candidate bins
 3) Final bin evaluation and summary of top bins
 
-In the GECCO '21 folder, please see the RARE_Methods.py file for code definition the RARE function and its subfunctions. The RAREConstantBinSizeFunctionsDefinition.py file contains code for a modified version of RARE that preserves a constant bin size through initilaization and evolutionary cycles (these files also contain code defining the RVDS functions for the data simulators used to test RARE)
+In the GECCO '21 folder, please see the RARE_Methods.py file for code definition of the RARE function and its subfunctions. The RAREConstantBinSizeFunctionsDefinition.py file contains code for a modified version of RARE that preserves a constant bin size through initilaization and evolutionary cycles (these files also contain code defining the RVDS functions for the data simulators used to test RARE)
 
 <ins>Parameters for RARE:</ins>
 1) given_starting_point: whether or not expert knowledge is being inputted (True or False)
@@ -30,8 +30,8 @@ In the GECCO '21 folder, please see the RARE_Methods.py file for code definition
 13) score_with_common_variables: if Relief scoring is used, whether or not common features should be used as context for evaluating rare variant bins
 14) instance_sample_size: if bin evaluation is done based on a sample of instances, input the sample size here
 15) crossover_probability: the probability of each feature in an offspring bin to crossover to the paired offspring bin (recommendation: 0.5 to 0.8)
-16) mutation_probability: the probability of each feature in a bin to be deleted (a proportionate probability is automatically applied on each feature outside the bin to be added (recommendation: 0.03 to 0.1)
-17) elitism_parameter: the proportion of elite bins in the current generation to be preserved for the next evolutionary cycle (recommendation: 0.2 to 0.4)
+16) mutation_probability: the probability of each feature in a bin to be deleted (a proportionate probability is automatically applied on each feature outside the bin to be added (recommendation: 0.05 to 0.5 depending on situation and number of iterations run)
+17) elitism_parameter: the proportion of elite bins in the current generation to be preserved for the next evolutionary cycle (recommendation: 0.2 to 0.8 depending on conservativeness of approach and number of iterations run)
 
 **RARE Variant Data Simulators (RVDSs)** are functions that create simulated data for testing/evaluating RARE.
 1) The RVDS for Univariate Association Bin (called RVDS_One_Bin) creates a dataset such that no rare variant feature is 100% predictive of class, but an additive bin of features is fully penetrant to class.
