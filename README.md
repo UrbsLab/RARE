@@ -8,7 +8,7 @@ through the following steps:
 
 1. Random bin initializaiton or expert knowledge input
 2. Repeated evolutionary cycles consisting of:
-   - Candidate bin evaluation with univariate scoring (chi-square test) or Relief-based scoring (MultiSURF algorithm); Note: new scoring options currently under testing
+   - Candidate bin evaluation with univariate scoring (chi-square test) or Relief-based scoring (MultiSURF algorithm); note: new scoring options currently under testing
    - Genetic operations (parent selection, crossover, and mutation) to generate the next generation of candidate bins
 3. Final bin evaluation and summary of top bins
 
