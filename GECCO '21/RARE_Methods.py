@@ -881,7 +881,7 @@ def Top_Bins_Summary(original_feature_matrix, label_name, bin_feature_matrix, bi
 
     #Creating a dictionary with each bin and the chi-square value and p-value
     Bin_Stats = {}
-    bin_names_list = list(amino_acid_bins.keys())
+    bin_names_list = list(bins.keys())
     for i in range (0, len(bin_names_list)):
         list_of_stats = []
         list_of_stats.append(chi_scores[i])
