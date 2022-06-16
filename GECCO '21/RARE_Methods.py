@@ -1037,7 +1037,7 @@ def RARE (given_starting_point, amino_acid_start_point, amino_acid_bins_start_po
 
 #Defining a function to present the top bins 
 def Top_Rare_Variant_Bins_Summary(rare_feature_matrix, label_name, bins, bin_scores, 
-                                  rare_feature_MAF_dict, number_of_top_bins):
+                                  rare_feature_MAF_dict, number_of_top_bins, bin_feature_matrix):
     
     #Ordering the bin scores from best to worst
     sorted_bin_scores = dict(sorted(bin_scores.items(), key=lambda item: item[1], reverse=True))
@@ -1051,7 +1051,7 @@ def Top_Rare_Variant_Bins_Summary(rare_feature_matrix, label_name, bins, bin_sco
     chi_scores, p_values = chi2(X,y)
     
     #Removing the label column to create a list of features
-    feature_df = rare_feature_df.drop(columns = [label_name])
+    feature_df = rare_feature_matrix.drop(columns = [label_name])
     
     #Creating a list of features
     feature_list = []
@@ -1074,7 +1074,7 @@ def Top_Rare_Variant_Bins_Summary(rare_feature_matrix, label_name, bins, bin_sco
 
     #Creating a dictionary with each bin and the chi-square value and p-value
     Bin_Stats = {}
-    bin_names_list = list(amino_acid_bins.keys())
+    bin_names_list = list(bins.keys())
     for i in range (0, len(bin_names_list)):
         list_of_stats = []
         list_of_stats.append(chi_scores[i])
@@ -1085,10 +1085,15 @@ def Top_Rare_Variant_Bins_Summary(rare_feature_matrix, label_name, bins, bin_sco
         #Printing the bin Name
         print ("Bin Rank " + str(i+1) + ": " + sorted_bin_list[i])
         #Printing the bin's MultiSURF/Univariate score, chi-square value, and p-value
-        print ("MultiSURF or Univariate Score: " + str(sorted_bin_feature_importance_values[i]) + "; chi-square value: " + str(Bin_Stats[sorted_bin_list[i]][0]) + "; p-value: " + str(Bin_Stats[sorted_bin_list[i]][1]))
+        print ("MultiSURF or Univariate Score: " + str(sorted_bin_feature_importance_values[i]) +
+               "; chi-square value: " + str(Bin_Stats[sorted_bin_list[i]][0]) +
+               "; p-value: " + str(Bin_Stats[sorted_bin_list[i]][1]))
         #Printing each of the features in the bin and also printing the univariate stats of that feature
         for j in range (0, len(bins[sorted_bin_list[i]])):
-            print ("Feature Name: " + str(bins[sorted_bin_list[i]][j]) + "; minor allele frequency: " + str(rare_feature_MAF_dict[bins[sorted_bin_list[i]][j]]) + "; chi-square value: " + str(Univariate_Feature_Stats[bins[sorted_bin_list[i]][j]][0]) + "; p-value: " + str(Univariate_Feature_Stats[bins[sorted_bin_list[i]][j]][1]))
+            print ("Feature Name: " + str(bins[sorted_bin_list[i]][j]) + 
+                   "; minor allele frequency: " + str(rare_feature_MAF_dict[bins[sorted_bin_list[i]][j]]) + 
+                   "; chi-square value: " + str(Univariate_Feature_Stats[bins[sorted_bin_list[i]][j]][0]) + 
+                   "; p-value: " + str(Univariate_Feature_Stats[bins[sorted_bin_list[i]][j]][1]))
         print ('---------------------------')                                              
 
 
