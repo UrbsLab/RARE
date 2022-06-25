@@ -38,14 +38,14 @@ def Remove_Empty_Variables (original_feature_matrix, label_name):
     feature_df = original_feature_matrix.drop(columns = [label_name])
 
     #Calculating the MAF of each feature
-    maf = feature_df.sum()/2*len(feature_df.index)
+    maf = list(feature_df.sum()/(2*len(feature_df.index))
     
     #Creating a df of features and their MAFs
     feature_maf_df = pd.DataFrame(feature_df.columns, columns = ['feature'])
     feature_maf_df['maf'] = maf
 
-    MAF_0_df = feature_maf_df[maf == 0]
-    MAF_not0_df = feature_maf_df[maf != 0]
+    MAF_0_df = feature_maf_df.loc[feature_maf_df['maf'] == 0]
+    MAF_not0_df = feature_maf_df.loc[feature_maf_df['maf'] != 0]
     
     #Creating a list of features with MAF = 0
     MAF_0_features = list(MAF_0_df['feature'])
