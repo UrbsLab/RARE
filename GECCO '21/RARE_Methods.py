@@ -581,13 +581,13 @@ def Create_Next_Generation(binned_feature_groups, bin_scores, max_population_of_
         
     #Determining the number of elite bins
     number_of_elite_bins = round(max_population_of_bins*elitism_parameter)
-    elites = []
+    elite_bin_list = sorted_bin_list[0:number_of_elite_bins]
+    
     #Adding the elites to a list of elite feature bins
-    for a in range (0, number_of_elite_bins):
-        elites.append(binned_feature_groups[sorted_bin_list[a]])
+    elite_dict = {k: v for k, v in binned_feature_groups.items() if k in elite_bin_list}
     
     #Creating a list of feature bins (without labels because those will be changed as things get deleted and added)
-    feature_bin_list = elites.copy()
+    feature_bin_list = list(elite_dict.values())
     
     #Adding the offspring to the feature bin list
     feature_bin_list.extend(offspring_list)
@@ -601,86 +601,44 @@ def Create_Next_Generation(binned_feature_groups, bin_scores, max_population_of_
 def Regroup_Feature_Matrix(feature_list, feature_matrix, label_name, feature_bin_list):
        
     #First deleting any bins that are empty
-    #Creating a list of bins to delete
-    bins_to_delete = []
-    for i in feature_bin_list:
-        if not i:
-            bins_to_delete.append(i)
-    for i in bins_to_delete:
-        feature_bin_list.remove(i)
+    bins_deleted = [x for x in feature_bin_list if x == []]
+    feature_bin_list = [x for x in feature_bin_list if x != []]
     
-    #The length of the bin will be equal to the average length of nonempty bins in the population
-    bin_lengths = []
-    for i in feature_bin_list:
-        if len(i) > 0:
-            bin_lengths.append(len(i))      
-    replacement_length = round(statistics.mean(bin_lengths))
-    
-    #Replacing each deleted bin with a bin with random features
-    for i in range (0, len(bins_to_delete)):
-        replacement = random.sample(feature_list, replacement_length)
-        feature_bin_list.append(replacement)
-
     #Checking each pair of bins, if the bins are duplicates then one of the copies will be deleted
-    seen = set()
-    unique = []
-    for x in feature_bin_list:
-        srtd = tuple(sorted(x))
-        if srtd not in seen:
-            unique.append(x)
-            seen.add(srtd)
+    no_duplicates = []
+    num_duplicates = 0
+    for bin in feature_bin_list:
+        if bin not in no_duplicates:
+            no_duplicates.append(bin)
+        else:
+            num_duplicates += 1
     
-    #Replacing each deleted bin with a bin with random features
-    replacement_number = len(feature_bin_list) - len(unique)
-    feature_bin_list = unique.copy()
+    feature_bin_list = no_duplicates
     
-    for i in feature_bin_list:
-        if len(i) > 0:
-            bin_lengths.append(len(i))      
+    #Calculate average length of nonempty bins in the population
+    bin_lengths = [len(x) for x in feature_bin_list if len(x) != 0]    
     replacement_length = round(statistics.mean(bin_lengths))
     
-    for i in range(0, replacement_number):
+    #Replacing each deleted bin with a bin with random features
+    for i in range (0, len(bins_deleted) + num_duplicates):
         replacement = random.sample(feature_list, replacement_length)
+        while replacement in feature_bin_list:
+            replacement = random.sample(feature_list, replacement_length)
         feature_bin_list.append(replacement)
-    
-    
-    #Deleting duplicate features in the same bin and replacing them with random features
-    for Bin in range (0, len(feature_bin_list)):
-        unique = []
-        for a in range (0, len(feature_bin_list[Bin])):
-            if feature_bin_list[Bin][a] not in unique:
-                unique.append(feature_bin_list[Bin][a])
-    
-        replace_number = len(feature_bin_list[Bin]) - len(unique)
-        
-        features_not_in_offspring = []
-        features_not_in_offspring = [item for item in feature_list if item not in feature_bin_list[Bin]]
-        
-        bin_replacement = unique.copy()
-        if len(features_not_in_offspring) > replace_number:
-            replacements = random.sample(features_not_in_offspring, replace_number)
-        else:
-            replacements = features_not_in_offspring.copy()
-        bin_replacement.extend(replacements)
-        
-        feature_bin_list[Bin] = bin_replacement.copy()
-
     
     #Creating an empty data frame for the feature matrix with bins
     bins_df = pd.DataFrame()
     
     #Creating a list of 0s, where the number of 0s is the number of instances in the original feature matrix
-    zero_list = []
-    for a in range (0, len(feature_matrix.index)):
-        zero_list.append(0)
-        
+    zero_list = [0] * len(feature_matrix.index)
+
     #Creating a dummy data frame
     dummy_df = pd.DataFrame()
     dummy_df['Zeros'] = zero_list
     #The list and dummy data frame will be used for adding later
     
-   #For each feature group/bin, the values of the features in the bin will be summed to create a value for the bin
-   #This will be used to create a a feature matrix for the bins and a dictionary of binned feature groups
+    #For each feature group/bin, the values of the features in the bin will be summed to create a value for the bin
+    #This will be used to create a a feature matrix for the bins and a dictionary of binned feature groups
 
     count = 0
     binned_feature_groups = {}
@@ -724,6 +682,8 @@ def RAFE (given_starting_point, amino_acid_start_point, amino_acid_bins_start_po
         bin_names = amino_acid_bins.keys()
         features_to_remove = [item for item in amino_acid_start_point if item not in nonempty_feature_list]
         for bin_name in bin_names:
+            #Remove duplicate features
+            amino_acid_bins[bin_name] = list(set(amino_acid_bins[bin_name]))
             for feature in features_to_remove:
                 if feature in amino_acid_bins[bin_name]:
                     amino_acid_bins[bin_name].remove(feature)
@@ -863,9 +823,13 @@ def RARE (given_starting_point, amino_acid_start_point, amino_acid_bins_start_po
         bin_names = amino_acid_bins.keys()
         features_to_remove = [item for item in amino_acid_start_point if item not in rare_feature_list]
         for bin_name in bin_names:
+            #Remove duplicate features
+            amino_acid_bins[bin_name] = list(set(amino_acid_bins[bin_name]))
             for feature in features_to_remove:
                 if feature in amino_acid_bins[bin_name]:
+                    #Remove features not in rare_feature_list
                     amino_acid_bins[bin_name].remove(feature)
+                    
     
     #Otherwise randomly initialize the bins
     elif given_starting_point == False:
