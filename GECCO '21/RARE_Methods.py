@@ -9,13 +9,22 @@
 
 
 #Importing packages
+import os
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import random
+from random import choice
+from random import seed
 from random import randrange
+import collections
 import statistics
+from sklearn.pipeline import make_pipeline
 from skrebate import MultiSURF
+import math
 import numpy as numpy
+import pandas as pd
+import seaborn as sns
 from sklearn.feature_selection import chi2
 
 
@@ -36,28 +45,35 @@ from sklearn.feature_selection import chi2
 def Remove_Empty_Variables (original_feature_matrix, label_name):
     #Removing the label column to create a list of features
     feature_df = original_feature_matrix.drop(columns = [label_name])
+    
+    #Creating a list of features 
+    feature_list = []
+    for column in feature_df:
+        feature_list.append(str(column))
 
-    #Calculating the MAF of each feature
-    maf = list(feature_df.sum()/(2*len(feature_df.index))
+    feature_matrix_no_empty_variables = pd.DataFrame()
     
-    #Creating a df of features and their MAFs
-    feature_maf_df = pd.DataFrame(feature_df.columns, columns = ['feature'])
-    feature_maf_df['maf'] = maf
-
-    MAF_0_df = feature_maf_df.loc[feature_maf_df['maf'] == 0]
-    MAF_not0_df = feature_maf_df.loc[feature_maf_df['maf'] != 0]
+    #Creating a list of features with MAF = 0 to delete
+    MAF_0_features = []
     
-    #Creating a list of features with MAF = 0
-    MAF_0_features = list(MAF_0_df['feature'])
+    for i in range (0, len(feature_list)):
+        #If the MAF of the feature is less than the cutoff, it will be removed
+        if feature_df[feature_list[i]].sum()/(2*len(feature_df.index)) == 0:
+            MAF_0_features.append(feature_list[i])
     
-    #Saving the feature list of nonempty features
-    nonempty_feature_list = list(MAF_not0_df['feature'])
+    #Removing the features
+    for j in range (0, len(MAF_0_features)):
+        feature_list.remove(MAF_0_features[j])
     
-    #Creating feature matrix with only features where MAF != 0
-    feature_matrix_no_empty_variables = feature_df[nonempty_feature_list]
+    #Updating the feature matrix accordingly
+    for k in range (0, len(feature_list)):
+        feature_matrix_no_empty_variables[feature_list[k]] = feature_df[feature_list[k]]
     
     #Adding the class label to the feature matrix
     feature_matrix_no_empty_variables['Class'] = original_feature_matrix[label_name]
+    
+    #Saving the feature list of nonempty features
+    nonempty_feature_list = feature_list
     
     return feature_matrix_no_empty_variables, MAF_0_features, nonempty_feature_list
 
@@ -74,12 +90,15 @@ def Random_Feature_Grouping(feature_matrix, label_name, number_of_groups, min_fe
     feature_df = feature_matrix.drop(columns = [label_name])
     
     #Creating a list of features 
-    feature_list = list(feature_df.columns)
+    feature_list = []
+    for column in feature_df:
+        feature_list.append(str(column))
     
     #Adding a random number of repeats of the features so that features can be in more than one group
     for w in range (0, len(feature_list)):
         repeats = randrange(max_number_of_groups_with_feature)
-        feature_list.extend([feature_list[w]]*repeats)
+        for i in range (0, repeats):
+            feature_list.append(feature_list[w])
     
     #Shuffling the feature list to enable random groups
     random.shuffle(feature_list)
@@ -97,7 +116,11 @@ def Random_Feature_Grouping(feature_matrix, label_name, number_of_groups, min_fe
     
     #Removing duplicates of features in the same bin
     for z in range (0, len(feature_groups)):
-        feature_groups[z] = list(set(feature_groups[z]))
+        unique = []
+        for a in range (0, len(feature_groups[z])):
+            if feature_groups[z][a] not in unique:
+                unique.append(feature_groups[z][a])
+        feature_groups[z] = unique
     
     #Creating a dictionary with bin labels
     binned_feature_groups = {}
@@ -118,7 +141,9 @@ def Grouped_Feature_Matrix(feature_matrix, label_name, binned_feature_groups):
     bins_df = pd.DataFrame()
     
     #Creating a list of 0s, where the number of 0s is the number of instances in the original feature matrix
-    zero_list = [0] * len(feature_matrix.index)
+    zero_list = []
+    for a in range (0, len(feature_matrix.index)):
+        zero_list.append(0)
         
     #Creating a dummy data frame
     dummy_df = pd.DataFrame()
@@ -126,10 +151,12 @@ def Grouped_Feature_Matrix(feature_matrix, label_name, binned_feature_groups):
     #The list and dummy data frame will be used for adding later
     
    #For each feature group/bin, the values of the amino acid in the bin will be summed to create a value for the bin 
+    count = 0
     for key in binned_feature_groups:
         sum_column = dummy_df['Zeros']
         for j in range (0, len(binned_feature_groups[key])):
             sum_column = sum_column + feature_matrix[binned_feature_groups[key][j]]
+        count = count + 1
         bins_df[key] = sum_column
     
     #Adding the class label to the data frame
@@ -147,63 +174,50 @@ def Rare_and_Common_Variable_Separation (original_feature_matrix, label_name, ra
     feature_df = original_feature_matrix.drop(columns = [label_name])
     
     #Creating a list of features 
-    feature_list = list(feature_df.columns)
+    feature_list = []
+    for column in feature_df:
+        feature_list.append(str(column))
     
-    #Calculating the MAF of each feature
-    maf = list(feature_df.sum()/(2*len(feature_df.index)))
-
-    #Creating a df of features and their MAFs
-    feature_maf_df = pd.DataFrame(feature_df.columns, columns = ['feature'])
-    feature_maf_df['maf'] = maf
-    print(rare_variant_MAF_cutoff)
-    print("MAF")
-    print(maf)
-    print(feature_maf_df['maf'])
-    
-    #If the MAF of the feature is less than the cutoff, it will be designated as a rare variant
-    #If the MAF of the feature is greater than or equal to the cutoff, it will be considered as a common feature
-    rare_df = feature_maf_df.loc[(feature_maf_df['maf'] < rare_variant_MAF_cutoff) & (feature_maf_df['maf'] > 0)]
-    common_df = feature_maf_df.loc[feature_maf_df['maf'] > rare_variant_MAF_cutoff]
-    MAF_0_df = feature_maf_df.loc[feature_maf_df['maf'] == 0]
-      
     #Creating lists of rare and common features
-    rare_feature_list = list(rare_df['feature'])
-    print("RARE")
-    print(len(rare_df))
-    common_feature_list = list(common_df['feature'])
-    print(len(common_df))
-    MAF_0_features = list(MAF_0_df['feature'])
-    print(len(MAF_0_df))
+    rare_feature_list = []
+    common_feature_list = []
+    MAF_0_features = []
     
     #Creating dictionaries of rare and common features, as the MAF of the features will be useful later
-    rare_feature_MAF_dict = dict(zip(rare_df['feature'], rare_df['maf']))
-    common_feature_MAF_dict = dict(zip(common_df['feature'], common_df['maf']))
-
+    rare_feature_MAF_dict = {}
+    common_feature_MAF_dict = {}
     
     #Creating an empty data frames for feature matrices of rare features and common features
     rare_feature_df = pd.DataFrame()
     common_feature_df = pd.DataFrame()
     
-    #Creating data frames for feature matrices of rare features and common features
-    rare_feature_df = feature_df[rare_feature_list]
-    common_feature_df = feature_df[common_feature_list]
-
-    '''
     for i in range (0, len(feature_list)):
         #If the MAF of the feature is less than the cutoff, it will be designated as a rare variant
         if feature_df[feature_list[i]].sum()/(2*len(feature_df.index)) < rare_variant_MAF_cutoff and feature_df[feature_list[i]].sum()/(2*len(feature_df.index)) > 0:
+            rare_feature_list.append(feature_list[i])
+            rare_feature_MAF_dict[feature_list[i]] = feature_df[feature_list[i]].sum()/(2*len(feature_df.index))
             rare_feature_df[feature_list[i]] = feature_df[feature_list[i]]
+        
+        elif feature_df[feature_list[i]].sum()/(2*len(feature_df.index)) == 0:
+            MAF_0_features.append(feature_list[i])
 
+        
         #Otherwise, it will be considered as a common feature
-        elif feature_df[feature_list[i]].sum()/(2*len(feature_df.index)) >= rare_variant_MAF_cutoff:
-            common_feature_df[feature_list[i]] = feature_df[feature_list[i]] 
-    '''
+        elif feature_df[feature_list[i]].sum()/(2*len(feature_df.index)) > rare_variant_MAF_cutoff:
+            common_feature_list.append(feature_list[i])
+            common_feature_MAF_dict[feature_list[i]] = feature_df[feature_list[i]].sum()/(2*len(feature_df.index))
+            common_feature_df[feature_list[i]] = feature_df[feature_list[i]]
+        
+        #In case the MAF is exactly the cutoff 
+        elif feature_df[feature_list[i]].sum()/(2*len(feature_df.index)) == rare_variant_MAF_cutoff:
+            common_feature_list.append(feature_list[i])
+            common_feature_MAF_dict[feature_list[i]] = feature_df[feature_list[i]].sum()/(2*len(feature_df.index))
+            common_feature_df[feature_list[i]] = feature_df[feature_list[i]]
+    
     #Adding the class label to each data frame
     rare_feature_df['Class'] = original_feature_matrix[label_name]
     common_feature_df['Class'] = original_feature_matrix[label_name]
     return rare_feature_list, rare_feature_MAF_dict, rare_feature_df, common_feature_list, common_feature_MAF_dict, common_feature_df, MAF_0_features
-
-
 
 
 # In[ ]:
@@ -404,13 +418,16 @@ def MultiSURF_Feature_Importance_Bin_and_Common_Features_Instance_Sample(bin_fea
 def Chi_Square_Feature_Importance(bin_feature_matrix, label_name, amino_acid_bins):
     
    #Calculating the chisquare and p values of each of the bin features in the bin feature matrix
+    feature_matrix = bin_feature_matrix.copy()
     X = bin_feature_matrix.drop(label_name,axis=1)
     y = bin_feature_matrix[label_name]
     chi_scores, p_values = chi2(X,y)
 
-    #Creating a dictionary with each bin and the chi-square value and p-value 
+    #Creating a dictionary with each bin and the chi-square value and p-value
+    bin_scores = {}
     bin_names_list = list(amino_acid_bins.keys())
-    bin_scores = dict(zip(bin_names_list, chi_scores))
+    for i in range (0, len(bin_names_list)):
+        bin_scores[bin_names_list[i]] = chi_scores[i]
         
     for i in bin_scores.keys():
         if np.isnan(bin_scores[i]) == True:
@@ -639,7 +656,8 @@ def Create_Next_Generation(binned_feature_groups, bin_scores, max_population_of_
 
 #Defining a function to recreate the feature matrix (add up values of amino a cids from original dataset)
 def Regroup_Feature_Matrix(feature_list, feature_matrix, label_name, feature_bin_list):
-       
+    
+    
     #First deleting any bins that are empty
     #Creating a list of bins to delete
     bins_to_delete = []
@@ -757,12 +775,14 @@ def RAFE (given_starting_point, amino_acid_start_point, amino_acid_bins_start_po
     
     #If there is a starting point, use that for the amino acid list and the amino acid bins list
     if given_starting_point == True:
-        #Keep only rare features from starting points in amino_acids and amino_acid_bins
-        amino_acids = list(set(amino_acid_start_point).intersection(nonempty_feature_list))
-                
         amino_acid_bins = amino_acid_bins_start_point.copy()
+        amino_acids = amino_acid_start_point.copy()
+        
+        features_to_remove = [item for item in amino_acids if item not in nonempty_feature_list]
+        for feature in features_to_remove:
+            amino_acids.remove(feature)
+                
         bin_names = amino_acid_bins.keys()
-        features_to_remove = [item for item in amino_acid_start_point if item not in nonempty_feature_list]
         for bin_name in bin_names:
             for feature in features_to_remove:
                 if feature in amino_acid_bins[bin_name]:
@@ -896,12 +916,14 @@ def RARE (given_starting_point, amino_acid_start_point, amino_acid_bins_start_po
     #Step 1: Initialize Population of Candidate Bins 
     #Initialize Feature Groups
     if given_starting_point == True:
-        #Keep only rare features from starting points in amino_acids and amino_acid_bins
-        amino_acids = list(set(amino_acid_start_point).intersection(rare_feature_list))
-                
         amino_acid_bins = amino_acid_bins_start_point.copy()
+        amino_acids = amino_acid_start_point.copy()
+        
+        features_to_remove = [item for item in amino_acids if item not in rare_feature_list]
+        for feature in features_to_remove:
+            amino_acids.remove(feature)
+                
         bin_names = amino_acid_bins.keys()
-        features_to_remove = [item for item in amino_acid_start_point if item not in rare_feature_list]
         for bin_name in bin_names:
             for feature in features_to_remove:
                 if feature in amino_acid_bins[bin_name]:
@@ -935,7 +957,7 @@ def RARE (given_starting_point, amino_acid_start_point, amino_acid_bins_start_po
                                                                                                   label_name, 
                                                                                                   instance_sample_size)
         
-            #Or feature importance is calculated only based on rare variant bins
+            #Or feauture importance is calculated only based on rare variant bins
             elif score_with_common_variables == False:
                 #Calculating feature importance with MultiSURF on whole dataset or MultiSURF on a sample
                 if score_based_on_sample == False:
