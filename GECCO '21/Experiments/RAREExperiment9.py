@@ -35,7 +35,7 @@ for replicate in range (0, 1):
     bin_feature_matrix, common_features_and_bins_matrix, amino_acid_bins, amino_acid_bin_scores, rare_feature_MAF_dict, common_feature_MAF_dict, rare_feature_df, common_feature_df, MAF_0_features = RARE(False, None, None, 0, sim_epi_data, 'Class', 0.05, 50, 3, 35, 'Relief only on bin and common features', True, True, 500, 0.8, 0.1, 0.4)    
     
     #Summary of the best bins to compare the correct answer with RARE's result
-    Top_Rare_Variant_Bins_Summary(rare_feature_df, 'Class', amino_acid_bins, amino_acid_bin_scores, rare_feature_MAF_dict, 10, bin_feature_matrix)
+    Top_Rare_Variant_Bins_Summary(rare_feature_df, 'Class', amino_acid_bins, amino_acid_bin_scores, rare_feature_MAF_dict, 10)
     
     print('-----------------------------------------------------------------')    
 
